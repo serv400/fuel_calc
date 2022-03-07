@@ -20,7 +20,9 @@ public class FuelServiceImpl implements FuelService {
     }
 
     private void initScraping() {
-        scrapingService.initHashMap();
+        scrapingService.initHashMap(1);
+        scrapingService.initHashMap(4);
+        scrapingService.initHashMap(6);
         scrapingService.showFuelsDTO();
     }
 
@@ -29,7 +31,7 @@ public class FuelServiceImpl implements FuelService {
         for (Map.Entry<String, Float> fuel : scrapingService.getFuels().entrySet()) {
             String typeOfFuel = fuel.getKey();
             Float pricePerLitre = fuel.getValue();
-            response.append(typeOfFuel).append(" : ").append(pricePerLitre).append("\n");
+            response.append(typeOfFuel).append(" : ").append(String.format("%.2f",pricePerLitre)).append("\n");
         }
         return response.toString();
     }
@@ -41,7 +43,7 @@ public class FuelServiceImpl implements FuelService {
             String typeOfFuel = fuel.getKey();
             Float pricePerLitre = fuel.getValue();
             if (type.equalsIgnoreCase(typeOfFuel)) {
-                response.append(typeOfFuel).append(" : ").append(pricePerLitre).append("\n");
+                response.append(typeOfFuel).append(" : ").append(String.format("%.2f",pricePerLitre)).append("\n");
                 found = true;
                 break;
             }
@@ -62,7 +64,7 @@ public class FuelServiceImpl implements FuelService {
             tank = tank.replaceAll(",", ".");
             if (type.equalsIgnoreCase(typeOfFuel) && Float.parseFloat(tank) > 0.0) {
                 float total = pricePerLitre * Float.parseFloat(tank);
-                response.append(typeOfFuel).append(" : ").append(pricePerLitre).append(" & Tank : ").append(tank).append("\n").append("Total cost : ").append(String.format("%.2f", total));
+                response.append(typeOfFuel).append(" : ").append(String.format("%.2f",pricePerLitre)).append(" & Tank : ").append(tank).append("\n").append("Total cost : ").append(String.format("%.2f", total));
                 found = true;
                 break;
             }

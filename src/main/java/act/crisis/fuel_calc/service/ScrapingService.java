@@ -11,7 +11,7 @@ import java.util.*;
 @Service
 public class ScrapingService {
 
-    private static final String baseUrl = "https://gr.fuelo.net/?lang=en";
+    private String baseUrl;
     private HashMap<String, Float> fuels;
     private List<FuelDTO> fuelDTOList;
 
@@ -20,26 +20,41 @@ public class ScrapingService {
         this.fuelDTOList = new ArrayList<>();
     }
 
-    protected void initHashMap(){
+    public void setBaseUrl(int typeOfFuel) {
+        this.baseUrl = "http://www.fuelprices.gr/price_stats_ng.view?prodclass="+typeOfFuel+"&nofdays=1&order_by=4";;
+    }
+
+    protected void initHashMap(int typeOfFuel){
         StringBuilder data= new StringBuilder();
         try (final WebClient client = new WebClient()) {
             client.getOptions().setCssEnabled(false);
             client.getOptions().setJavaScriptEnabled(false);
+            setBaseUrl(typeOfFuel);
             HtmlPage page = client.getPage(baseUrl);
-            List<HtmlElement> itemList = page.getByXPath("//*[@class='widget']/div[@class='box'][1]/h4");
+            List<HtmlElement> itemList = new ArrayList<>();
+            for (int i = 6; i <= 58; i++) {
+                itemList.addAll(page.getByXPath("//*[@class='mainArea']/table[2]/tbody/tr[" + i + "]/td[4]"));
+            }
             if (itemList.isEmpty())
                 throw new RuntimeException();
             else
                 for (HtmlElement item : itemList) {
-                    data.append(item.asNormalizedText());
+                    data.append(item.asNormalizedText()+"\n");
                 }
             List<String> tempList = new ArrayList<>(Arrays.asList(data.toString().split("\\n+")));
-            for (int i=1; i<tempList.size(); i++){
-                String[] line = tempList.get(i).split(":");
-                String fuel = line[0];
-                String price = Arrays.asList(line[1].split(" ")).get(1).replace(",",".");
-                fuels.put(fuel,Float.parseFloat(price));
+                float sum  = 0;
+            for (int i=0; i<tempList.size(); i++){
+                sum += Float.parseFloat(tempList.get(i).replace(",","."));
             }
+            String typeFuel = "";
+            switch (typeOfFuel){
+                case 1 : typeFuel = "Unleaded";
+                break;
+                case 4: typeFuel = "Diesel";
+                break;
+                case 6: typeFuel = "LPG";
+            }
+            fuels.put(typeFuel,sum/tempList.size());
             setFuelsToDTOModel();
         } catch (Exception e) {
             e.printStackTrace();

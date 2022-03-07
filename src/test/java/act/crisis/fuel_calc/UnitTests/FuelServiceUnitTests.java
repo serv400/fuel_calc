@@ -29,7 +29,7 @@ public class FuelServiceUnitTests {
     public void displayAllPricesValidTest() {
         assertThat(this.fuelService.displayAllFuelsAndPricesScrpd())
                 .contains(LocalDateTime.now(ZoneId.of("GMT+2")).format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")),
-                        this.scrapingService.getFuels().values().stream().findAny().get().toString(),
+                        String.format("%.2f",this.scrapingService.getFuels().values().stream().findAny().get()),
                         this.scrapingService.getFuels().keySet().stream().findAny().get());
     }
 
@@ -38,12 +38,13 @@ public class FuelServiceUnitTests {
         assertThat(this.fuelService.displayTypeOfFuelAndPrice("LPG"))
                 .contains(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")),
                         "LPG : "
-                                + this.scrapingService.getFuels().entrySet()
+                                + String.format("%.2f",this.scrapingService.getFuels().entrySet()
                                 .stream()
                                 .filter(fuel -> fuel.getKey().equalsIgnoreCase("LPG"))
                                 .collect(Collectors.toList())
                                 .get(0)
-                                .getValue());
+                                .getValue())
+                );
     }
 
     @Test

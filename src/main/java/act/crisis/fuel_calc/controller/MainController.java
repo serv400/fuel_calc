@@ -3,6 +3,7 @@ package act.crisis.fuel_calc.controller;
 import act.crisis.fuel_calc.service.FuelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -23,19 +24,14 @@ public class MainController {
     }
 
     @GetMapping("fuel")
-    public ResponseEntity<String> showFuelAndPriceByType(@RequestParam String type) {
+    public ResponseEntity<String> showFuelAndPriceByType(@RequestParam String type, @RequestParam @Nullable String tank) {
         try {
-            return ResponseEntity.ok().body(fuelService.displayTypeOfFuelAndPrice(type));
+            if (tank!=null && !tank.isEmpty())
+                return ResponseEntity.ok().body(fuelService.calculateConsumption(type, tank));
+            else
+                return ResponseEntity.ok().body(fuelService.displayTypeOfFuelAndPrice(type));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("This type of fuel is not very common in Greece");
+            return ResponseEntity.badRequest().body("Maybe you have done a mistake on your parameters given!");
         }
-    }
-
-    @GetMapping("consume")
-    public ResponseEntity<String> calculateConsumptionBasedOnFuelAndFuelTank(@RequestParam String type,
-                                                                             @RequestParam String tank) {
-        if (!tank.isEmpty())
-            return ResponseEntity.ok().body(fuelService.calculateConsumption(type, tank));
-        else return ResponseEntity.badRequest().body("Insert a valid tank number");
     }
 }

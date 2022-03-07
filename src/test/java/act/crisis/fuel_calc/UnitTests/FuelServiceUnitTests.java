@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ public class FuelServiceUnitTests {
     @Test
     public void displayAllPricesValidTest() {
         assertThat(this.fuelService.displayAllFuelsAndPricesScrpd())
-                .contains(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")),
+                .contains(LocalDateTime.now(ZoneId.of("GMT+2")).format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")),
                         this.scrapingService.getFuels().values().stream().findAny().get().toString(),
                         this.scrapingService.getFuels().keySet().stream().findAny().get());
     }
@@ -55,7 +56,7 @@ public class FuelServiceUnitTests {
     @Test
     public void calculateTotalPricesForValidFuelTypeAndValidTank() {
         assertThat(this.fuelService.calculateConsumption("LPG","50,0"))
-                .contains(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")),
+                .contains(LocalDateTime.now(ZoneId.of("GMT+2")).format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")),
                         String.format("Total cost : %.2f",
                                 (this.scrapingService.getFuels().entrySet()
                                 .stream()

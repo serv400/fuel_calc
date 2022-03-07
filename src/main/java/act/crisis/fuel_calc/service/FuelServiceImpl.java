@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public class FuelServiceImpl implements FuelService {
     }
 
     public String displayAllFuelsAndPricesScrpd() {
-        StringBuilder response = new StringBuilder("Average Price" + "\nToday: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")) + "\n");
+        StringBuilder response = new StringBuilder("Average Price" + "\nToday: " + LocalDateTime.now(ZoneId.of("GMT+2")).format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")) + "\n");
         for (Map.Entry<String, Float> fuel : scrapingService.getFuels().entrySet()) {
             String typeOfFuel = fuel.getKey();
             Float pricePerLitre = fuel.getValue();
@@ -34,7 +35,7 @@ public class FuelServiceImpl implements FuelService {
     }
 
     public String displayTypeOfFuelAndPrice(String type) {
-        StringBuilder response = new StringBuilder("Average Price" + "\nToday: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")) + "\n");
+        StringBuilder response = new StringBuilder("Average Price" + "\nToday: " + LocalDateTime.now(ZoneId.of("GMT+2")).format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")) + "\n");
         boolean found = false;
         for (Map.Entry<String, Float> fuel : scrapingService.getFuels().entrySet()) {
             String typeOfFuel = fuel.getKey();
@@ -53,7 +54,7 @@ public class FuelServiceImpl implements FuelService {
 
     @Override
     public String calculateConsumption(String type, String tank) {
-        StringBuilder response = new StringBuilder("Today: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")) + "\n");
+        StringBuilder response = new StringBuilder("Today: " + LocalDateTime.now(ZoneId.of("GMT+2")).format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")) + "\n");
         boolean found = false;
         for (Map.Entry<String, Float> fuel : scrapingService.getFuels().entrySet()) {
             String typeOfFuel = fuel.getKey();

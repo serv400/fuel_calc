@@ -16,16 +16,16 @@ public class ScrapingService {
     private List<FuelDTO> fuelDTOList;
 
     public ScrapingService() {
-        this.fuels =  new HashMap<>();
+        this.fuels = new HashMap<>();
         this.fuelDTOList = new ArrayList<>();
     }
 
     public void setBaseUrl(int typeOfFuel) {
-        this.baseUrl = "http://www.fuelprices.gr/price_stats_ng.view?prodclass="+typeOfFuel;
+        this.baseUrl = "http://www.fuelprices.gr/price_stats_ng.view?prodclass=" + typeOfFuel;
     }
 
-    protected void initHashMap(int typeOfFuel){
-        StringBuilder data= new StringBuilder();
+    protected void initHashMap(int typeOfFuel) {
+        StringBuilder data = new StringBuilder();
         try (final WebClient client = new WebClient()) {
             client.getOptions().setCssEnabled(false);
             client.getOptions().setJavaScriptEnabled(false);
@@ -39,22 +39,25 @@ public class ScrapingService {
                 throw new RuntimeException();
             else
                 for (HtmlElement item : itemList) {
-                    data.append(item.asNormalizedText()+"\n");
+                    data.append(item.asNormalizedText() + "\n");
                 }
             List<String> tempList = new ArrayList<>(Arrays.asList(data.toString().split("\\n+")));
-                float sum  = 0;
-            for (int i=0; i<tempList.size(); i++){
-                sum += Float.parseFloat(tempList.get(i).replace(",","."));
+            float sum = 0;
+            for (int i = 0; i < tempList.size(); i++) {
+                sum += Float.parseFloat(tempList.get(i).replace(",", "."));
             }
             String typeFuel = "";
-            switch (typeOfFuel){
-                case 1 : typeFuel = "Unleaded";
-                break;
-                case 4: typeFuel = "Diesel";
-                break;
-                case 6: typeFuel = "LPG";
+            switch (typeOfFuel) {
+                case 1:
+                    typeFuel = "Unleaded";
+                    break;
+                case 4:
+                    typeFuel = "Diesel";
+                    break;
+                case 6:
+                    typeFuel = "LPG";
             }
-            fuels.put(typeFuel,sum/tempList.size());
+            fuels.put(typeFuel, sum / tempList.size());
             setFuelsToDTOModel();
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,17 +68,21 @@ public class ScrapingService {
         return fuels;
     }
 
-    private void setFuelsToDTOModel(){
+    private void setFuelsToDTOModel() {
         for (Map.Entry<String, Float> fuel : fuels.entrySet()) {
             String typeOfFuel = fuel.getKey();
             Float pricePerLitre = fuel.getValue();
-            fuelDTOList.add(new FuelDTO(typeOfFuel,pricePerLitre));
+            fuelDTOList.add(new FuelDTO(typeOfFuel, pricePerLitre));
         }
     }
 
-    public void showFuelsDTO(){
-        for (FuelDTO f : fuelDTOList){
-            System.out.println(f.getName()+" "+f.getPrice());
+    public void showFuelsDTO() {
+        try {
+            for (FuelDTO f : fuelDTOList) {
+                System.out.println(f.getName() + " " + f.getPrice());
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }

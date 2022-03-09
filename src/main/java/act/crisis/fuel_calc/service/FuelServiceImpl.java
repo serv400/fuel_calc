@@ -31,51 +31,63 @@ public class FuelServiceImpl implements FuelService {
     }
 
     public String displayAllFuelsAndPricesScrpd() {
-        StringBuilder response = new StringBuilder("Average Price" + "\nToday: " + LocalDateTime.now(ZoneId.of("GMT+2")).format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")) + "\n");
-        for (Map.Entry<String, Float> fuel : scrapingService.getFuels().entrySet()) {
-            String typeOfFuel = fuel.getKey();
-            Float pricePerLitre = fuel.getValue();
-            response.append(typeOfFuel).append(" : ").append(String.format("%.2f", pricePerLitre)).append("\n");
+        if (!scrapingService.getFuels().isEmpty()) {
+            StringBuilder response = new StringBuilder("Average Price" + "\nToday: " + LocalDateTime.now(ZoneId.of("GMT+2")).format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")) + "\n");
+            for (Map.Entry<String, Float> fuel : scrapingService.getFuels().entrySet()) {
+                String typeOfFuel = fuel.getKey();
+                Float pricePerLitre = fuel.getValue();
+                response.append(typeOfFuel).append(" : ").append(String.format("%.2f", pricePerLitre)).append("\n");
+            }
+            return response.toString();
+        } else {
+            return "Sorry but our provider is down at the moment";
         }
-        return response.toString();
     }
 
     public String displayTypeOfFuelAndPrice(String type) {
-        StringBuilder response = new StringBuilder("Average Price" + "\nToday: " + LocalDateTime.now(ZoneId.of("GMT+2")).format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")) + "\n");
-        boolean found = false;
-        for (Map.Entry<String, Float> fuel : scrapingService.getFuels().entrySet()) {
-            String typeOfFuel = fuel.getKey();
-            Float pricePerLitre = fuel.getValue();
-            if (type.equalsIgnoreCase(typeOfFuel)) {
-                response.append(typeOfFuel).append(" : ").append(String.format("%.2f", pricePerLitre)).append("\n");
-                found = true;
-                break;
+        if (!scrapingService.getFuels().isEmpty()) {
+            StringBuilder response = new StringBuilder("Average Price" + "\nToday: " + LocalDateTime.now(ZoneId.of("GMT+2")).format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")) + "\n");
+            boolean found = false;
+            for (Map.Entry<String, Float> fuel : scrapingService.getFuels().entrySet()) {
+                String typeOfFuel = fuel.getKey();
+                Float pricePerLitre = fuel.getValue();
+                if (type.equalsIgnoreCase(typeOfFuel)) {
+                    response.append(typeOfFuel).append(" : ").append(String.format("%.2f", pricePerLitre)).append("\n");
+                    found = true;
+                    break;
+                }
             }
+            if (!found) {
+                throw new RuntimeException();
+            }
+            return response.toString();
+        } else {
+            return "Sorry but our provider is down at the moment";
         }
-        if (!found) {
-            throw new RuntimeException();
-        }
-        return response.toString();
     }
 
     @Override
     public String calculateConsumption(String type, String tank) {
-        StringBuilder response = new StringBuilder("Today: " + LocalDateTime.now(ZoneId.of("GMT+2")).format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")) + "\n");
-        boolean found = false;
-        for (Map.Entry<String, Float> fuel : scrapingService.getFuels().entrySet()) {
-            String typeOfFuel = fuel.getKey();
-            Float pricePerLitre = fuel.getValue();
-            tank = tank.replaceAll(",", ".");
-            if (type.equalsIgnoreCase(typeOfFuel) && Float.parseFloat(tank) > 0.0) {
-                float total = pricePerLitre * Float.parseFloat(tank);
-                response.append(typeOfFuel).append(" : ").append(String.format("%.2f", pricePerLitre)).append(" & Tank : ").append(tank).append("\n").append("Total cost : ").append(String.format("%.2f", total));
-                found = true;
-                break;
+        if (!scrapingService.getFuels().isEmpty()) {
+            StringBuilder response = new StringBuilder("Today: " + LocalDateTime.now(ZoneId.of("GMT+2")).format(DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy")) + "\n");
+            boolean found = false;
+            for (Map.Entry<String, Float> fuel : scrapingService.getFuels().entrySet()) {
+                String typeOfFuel = fuel.getKey();
+                Float pricePerLitre = fuel.getValue();
+                tank = tank.replaceAll(",", ".");
+                if (type.equalsIgnoreCase(typeOfFuel) && Float.parseFloat(tank) > 0.0) {
+                    float total = pricePerLitre * Float.parseFloat(tank);
+                    response.append(typeOfFuel).append(" : ").append(String.format("%.2f", pricePerLitre)).append(" & Tank : ").append(tank).append("\n").append("Total cost : ").append(String.format("%.2f", total));
+                    found = true;
+                    break;
+                }
             }
+            if (!found) {
+                throw new RuntimeException();
+            }
+            return response.toString();
+        } else {
+            return "Sorry but our provider is down at the moment";
         }
-        if (!found) {
-            throw new RuntimeException();
-        }
-        return response.toString();
     }
 }

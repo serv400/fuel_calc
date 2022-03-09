@@ -21,7 +21,7 @@ public class ScrapingService {
     }
 
     public void setBaseUrl(int typeOfFuel) {
-        this.baseUrl = "http://www.fuelprices.gr/price_stats_ng.view?prodclass="+typeOfFuel+"&nofdays=1&order_by=4";;
+        this.baseUrl = "http://www.fuelprices.gr/price_stats_ng.view?prodclass="+typeOfFuel;
     }
 
     protected void initHashMap(int typeOfFuel){

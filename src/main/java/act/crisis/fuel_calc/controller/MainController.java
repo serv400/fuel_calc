@@ -34,4 +34,13 @@ public class MainController {
             return ResponseEntity.badRequest().body("Maybe you have done a mistake on your parameters given!");
         }
     }
+
+    @GetMapping("/calculator")
+    public ResponseEntity<String> calculateGivenFuelPriceBasedOnMoneyToSpend(@RequestParam String price, @RequestParam String money) {
+        try {
+                return ResponseEntity.ok().body(fuelService.calculateLitre(price,money));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Maybe you have done a mistake on your parameters given!");
+        }
+    }
 }

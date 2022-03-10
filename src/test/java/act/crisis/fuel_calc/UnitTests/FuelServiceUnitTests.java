@@ -81,4 +81,26 @@ public class FuelServiceUnitTests {
            this.fuelService.calculateConsumption("Lpg","0");
         });
     }
+
+    @Test
+    public void calculateTotalLitresForValidPriceAndValidMoneyToSpend() {
+        assertThat(this.fuelService.calculateLitre("2.149","50,0"))
+                .contains("Litres of fuel based on prices given: ",
+                        String.format("%.2f",(50.0/2.149))
+                );
+    }
+
+    @Test
+    public void calculateTotalLitresForInValidPriceAndValidMoneyToSpend() {
+        Assertions.assertThrows(RuntimeException.class,()->{
+            this.fuelService.calculateConsumption("0.00","50,0");
+        });
+    }
+
+    @Test
+    public void calculateTotalLitresForValidPriceAndInValidMoneyToSpend() {
+        Assertions.assertThrows(RuntimeException.class,()->{
+            this.fuelService.calculateConsumption("2.539","0.0");
+        });
+    }
 }

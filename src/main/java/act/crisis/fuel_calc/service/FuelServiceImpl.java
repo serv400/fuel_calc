@@ -36,7 +36,7 @@ public class FuelServiceImpl implements FuelService {
             for (Map.Entry<String, Float> fuel : scrapingService.getFuels().entrySet()) {
                 String typeOfFuel = fuel.getKey();
                 Float pricePerLitre = fuel.getValue();
-                response.append(typeOfFuel).append(" : ").append(String.format("%.2f", pricePerLitre)).append("\n");
+                response.append(typeOfFuel).append(" : ").append(String.format("%.2f", pricePerLitre)).append(" €\n");
             }
             return response.toString();
         } else {
@@ -52,7 +52,7 @@ public class FuelServiceImpl implements FuelService {
                 String typeOfFuel = fuel.getKey();
                 Float pricePerLitre = fuel.getValue();
                 if (type.equalsIgnoreCase(typeOfFuel)) {
-                    response.append(typeOfFuel).append(" : ").append(String.format("%.2f", pricePerLitre)).append("\n");
+                    response.append(typeOfFuel).append(" : ").append(String.format("%.2f  €", pricePerLitre)).append("\n");
                     found = true;
                     break;
                 }
@@ -77,7 +77,7 @@ public class FuelServiceImpl implements FuelService {
                 tank = tank.replaceAll(",", ".");
                 if (type.equalsIgnoreCase(typeOfFuel) && Float.parseFloat(tank) > 0.0) {
                     float total = pricePerLitre * Float.parseFloat(tank);
-                    response.append(typeOfFuel).append(" : ").append(String.format("%.2f", pricePerLitre)).append(" & Tank : ").append(tank).append("\n").append("Total cost : ").append(String.format("%.2f", total));
+                    response.append(typeOfFuel).append(" : ").append(String.format("%.2f", pricePerLitre)).append(" & Tank : ").append(tank).append("\n").append("Total cost : ").append(String.format("%.2f  €", total));
                     found = true;
                     break;
                 }
@@ -89,5 +89,22 @@ public class FuelServiceImpl implements FuelService {
         } else {
             return "Sorry but our provider is down at the moment";
         }
+    }
+
+    @Override
+    public String calculateLitre(String price, String moneyToSpend) {
+            StringBuilder response = new StringBuilder();
+            if (price == null || moneyToSpend == null) {
+                throw new RuntimeException();
+            } else {
+                price = price.replaceAll(",", ".");
+                moneyToSpend = moneyToSpend.replaceAll(",", ".");
+                if (Float.parseFloat(price) <= 0.0f || Float.parseFloat(moneyToSpend) <= 0.0f) {
+                    throw new RuntimeException();
+                }
+                float res = Float.parseFloat(moneyToSpend) / Float.parseFloat(price);
+                response.append("Litres of fuel based on prices given: ").append(String.format("%.2f", res)).append(" L\n");
+                return response.toString();
+            }
     }
 }
